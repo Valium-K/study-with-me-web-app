@@ -1,0 +1,19 @@
+spring:
+  datasource: # DB connection 을 위한 datasource 설정
+    url: jdbc:h2:tcp://localhost/~/H2/study/study
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create   # App 실행시점에 table 을 삭제 후 재생성
+    properties:
+      hibernate:
+        # show_sql: true
+        format_sql: true
+  profiles:
+    active: local
+
+logging:
+  level:
+    org.hibernte.SQL: debug   # JPA / Hibernate 가 생성하는 디버그단 로깅
