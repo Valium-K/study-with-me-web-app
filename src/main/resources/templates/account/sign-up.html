@@ -61,10 +61,11 @@
             <div class="form-group">
                 <label for="email">이메일</label>
                 <input id="email" type="email" th:field="*{email}" class="form-control"
-                       placeholder="your@email.com" aria-describedby="emailHelp" required>
+                       placeholder="your@email.com" aria-describedby="emailHelp" required> <!-- email의 단순 required는 email형식을 체크한다.-->
                 <small id="emailHelp" class="form-text text-muted">
                     스터디올래는 사용자의 이메일을 공개하지 않습니다.
                 </small>
+
                 <small class="invalid-feedback">이메일을 입력하세요.</small>
                 <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</small>
             </div>
@@ -118,8 +119,12 @@
                 form.addEventListener('submit', function (event) {
                     if (form.checkValidity() === false) {
                         event.preventDefault();
+
+                        // 현재 이벤트 이후의 전파를 막습니다.
                         event.stopPropagation();
                     }
+
+                    // input 태그의 required 이하 을 확인한다.
                     form.classList.add('was-validated')
                 }, false)
             })
