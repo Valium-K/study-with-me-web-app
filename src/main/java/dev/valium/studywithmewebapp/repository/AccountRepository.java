@@ -14,11 +14,17 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select new dev.valium.studywithmewebapp.controller.dto.AccountDto(a.nickname, a.email, a.password) " +
             "from Account a where a.email = :email")
-    AccountDto findByEmail(@Param("email") String email);
+    AccountDto findDtoByEmail(@Param("email") String email);
+
+    @Transactional
+    Account findByEmail(String email);
+    Account findReadOnlyByEmail(String email);
 
     @Query("select new dev.valium.studywithmewebapp.controller.dto.AccountDto(a.nickname, a.email, a.password) " +
             "from Account a where a.nickname = :nickname")
-    AccountDto findByNickname(@Param("nickname") String nickname);
+    AccountDto findDtoByNickname(@Param("nickname") String nickname);
+    Account findByNickname(String nickname);
 
-
+    boolean existsByEmail(String email);
+    boolean existsByNickname(String nickname);
 }

@@ -10,7 +10,7 @@ spring:
     properties:
       hibernate:
         # show_sql: true
-        format_sql: true
+        format-sql: true
   profiles:
     active: local
 

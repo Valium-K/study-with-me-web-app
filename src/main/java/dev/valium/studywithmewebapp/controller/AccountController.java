@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final SignUpFormValidator signUpFormValidator;
+    private final AccountRepository accountRepository;
 
     @InitBinder("signUpForm") // 변수명이 아닌 클래스명의 camelCase
     public void initBinder(WebDataBinder webDataBinder) {
@@ -60,5 +62,29 @@ public class AccountController {
         return "redirect:/";
     }
 
+    @GetMapping("/check-email-token")
+    public String checkEmailToken(String token, String email, Model model) {
+
+        Account account = accountRepository.findByEmail(email);
+        String path = "account/check-email";
+
+        // TODO: Is that possible that account is NULL???
+        if(account == null) {
+            model.addAttribute("error", "error.email");
+            return path;
+        }
+        else if(!account.getEmailCheckToken().equals(token)) {
+            model.addAttribute("error", "error.token");
+            return path;
+        }
+
+        account.setEmailVerified(true);
+        account.setJoinedAt(LocalDateTime.now());
+
+        model.addAttribute("numberOfUser", accountRepository.count());
+        model.addAttribute("nickname", account.getNickname());
+
+        return path;
+    }
 
 }
