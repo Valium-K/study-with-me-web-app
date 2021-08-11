@@ -1,44 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"><!--thymeleaf 사용하기 위한 xmlnamespace 설정-->
-<head>
-    <meta charset="UTF-8">
-    <title>StudyOlle</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <!--style은 head에 위치시켜 rendering 적용시켜 렌더링 될 때 스타일 적용시켜 읽히고-->
-    <style>
-        .container {
-            max-width: 100%;
-        }
-    </style>
-</head>
+<head th:replace="fragments.html::head"></head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <a class="navbar-brand" href="/" th:href="@{/}"><!--thymeleaf로 렌더링 할때 href값을 이 값을 쓴다.-->
-        <img src="/images/logo.png" width="30" height="30">
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <form th:action="@{/search/study}" class="form-inline" method="get">
-                    <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기">
-                </form>
-            </li>
-        </ul>
-
-        <ul class="navbar-nav .justify-content-end">
-            <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/login}">로그인</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" th:href="@{/signup}">가입</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<div th:replace="fragments.html::main-nav"></div>
 
 <div class="container">
     <div class="py-5 text-center">
@@ -90,21 +54,8 @@
             </div>
         </form>
     </div>
-
-    <footer th:fragment="footer">
-        <div class="row justify-content-center">
-            <img class="mb-2" src="/images/logo_kr.png" alt="" width="100">
-            <small class="d-block mb-3 text-muted">&copy; 2021</small>
-        </div>
-    </footer>
+    <div th:replace="fragments.html::footer"></div>
 </div>
-
-
-
-<!--자바스크립트는 로딩할때 시간이 걸릴 수가 있어서 위쪽 블럭에 넣어두면 로딩하느라 끊겨서 렌더링이 늦어진다.-->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
 <script type="application/javascript">
     (function () {

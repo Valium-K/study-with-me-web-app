@@ -51,3 +51,9 @@ Thymeleaf
         }, false)
     }())
 ```
+
+### Thymeleaf extras: spring-security
+* spring security5를 지원하는 확장팩
+    * dependency: `implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'`
+    * nameSpace: `xml:sec="http://www.thymeleaf.org/extras/spring-security"`
+    

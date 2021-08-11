@@ -7,9 +7,15 @@ import dev.valium.studywithmewebapp.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +26,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void saveNewAccount(AccountDto signUpForm) {
+    public Account saveNewAccount(AccountDto signUpForm) {
         Account newAccount = accountRepository.save(Account.builder()
                 .email(signUpForm.getEmail())
                 .nickname(signUpForm.getNickname())
@@ -31,6 +37,8 @@ public class AccountService {
                 .build()
         );
         sendSignUpConfirmEmail(newAccount);
+
+        return newAccount;
     }
 
     private void sendSignUpConfirmEmail(Account savedAccount) {
@@ -45,4 +53,16 @@ public class AccountService {
         javaMailSender.send(mailMessage);
     }
 
+    public void login(Account account) {
+
+        // 생성자를 외부에서 쓰는것은 권장 되진 않지만, 이렇게 쓰는 이유는 DB에서 plane password를 알 수 없기 때문이다.
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                account.getNickname(),
+                account.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(token);
+    }
 }
+

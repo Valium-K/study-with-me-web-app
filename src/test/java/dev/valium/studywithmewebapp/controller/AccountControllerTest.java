@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -62,7 +64,8 @@ class AccountControllerTest {
                 .param("password", "1234")
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("account/sign-up"));
+                .andExpect(view().name("account/sign-up"))
+                .andExpect(unauthenticated());     // spring security 제공
     }
 
     @Test
@@ -74,7 +77,8 @@ class AccountControllerTest {
                 .param("password", "12345678")
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/"));
+                .andExpect(view().name("redirect:/"))
+                .andExpect(authenticated().withUsername("member1"));
 
         assertNotNull(accountRepository.findDtoByEmail("email@email.com"));
 

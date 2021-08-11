@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="head">
+  <meta charset="UTF-8">
+  <title>StudyOlle</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css" />
+  <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
+  <!--style은 head에 위치시켜 rendering 적용시켜 렌더링 될 때 스타일 적용시켜 읽히고-->
+  <style>
+    .container {
+      margin: 0px;
+      padding: 0px;
+      max-width: 100%;
+    }
+  </style>
+  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+</head>
+
+<nav th:fragment="main-nav" class="navbar navbar-expand-sm navbar-dark bg-dark">
+  <a class="navbar-brand" href="/" th:href="@{/}"><!--thymeleaf로 렌더링 할때 href값을 이 값을 쓴다.-->
+    <img src="/images/logo_symbol.png" width="30" height="30">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <form th:action="@{/search/study}" class="form-inline" method="get">
+          <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기">
+        </form>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav .justify-content-end">
+      <li class="nav-item" sec:authorize="!isAuthenticated()">
+        <a class="nav-link" href="#" th:href="@{/login}">로그인</a>
+      </li>
+      <li class="nav-item" sec:authorize="!isAuthenticated()">
+        <a class="nav-link" href="#" th:href="@{/sign-up}">가입</a>
+      </li>
+
+      <li class="nav-item" sec:authorize="isAuthenticated()">
+        <a class="nav-link" href="#" th:href="@{/notifications}">
+          <i class="far fa-bell"></i>
+        </a>
+      </li>
+      <li class="nav-item" sec:authorize="isAuthenticated()">
+        <a class="nav-link btn btn-outline-primary" href="#" th:href="@{/notifications}">
+          <i class="fas fa-plus"></i>스터디 개설
+        </a>
+      </li>
+
+      <li class="nav-item-dropdown" sec:authorize="isAuthenticated()">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+
+
+          <svg data-jdenticon-value="user127" th:data-jdenticon-value="${#authentication.name}"
+               width="24" height="24" class="rounded border bg-light"></svg>
+          <!--            <img th:if="${!#strings.isEmpty(account?.profileImage)}"-->
+          <!--                 th:src="${account.profileImage}" width="24" height="24" class="rounded border"/>-->
+        </a>
+        <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
+          <h6 class="dropdown-header">
+            <span sec:authentication="name">Username</span>
+          </h6>
+          <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}">프로필</a>
+          <a class="dropdown-item" href="#">스터디</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" th:href="@{'/settings/profile'}">설정</a>
+          <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+            <button class="dropdown-item" type="submit">로그아웃</button>
+          </form>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<footer th:fragment="footer">
+  <div class="row justify-content-center">
+    <img src="/images/logo_kr.png" />
+    <small class="d-block mb-3 text-muted">&copy; 2021</small>
+  </div>
+</footer>
+
+
+<!--자바스크립트는 로딩할때 시간이 걸릴 수가 있어서 위쪽 블럭에 넣어두면 로딩하느라 끊겨서 렌더링이 늦어진다.-->
+<!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
+
+<!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>-->
+
+<script type="application/javascript" th:fragment="">
+  (function () {
+    'use strict';
+
+    window.addEventListener('load', function () {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+
+      // Loop over them and prevent submission
+      Array.prototype.filter.call(forms, function (form) {
+        form.addEventListener('submit', function (event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+
+            // 현재 이벤트 이후의 전파를 막습니다.
+            event.stopPropagation();
+          }
+
+          // input 태그의 required 이하 을 확인한다.
+          form.classList.add('was-validated')
+        }, false)
+      })
+    }, false)
+  }())
+</script>

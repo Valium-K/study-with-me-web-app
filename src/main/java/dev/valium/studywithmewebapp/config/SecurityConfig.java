@@ -26,8 +26,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //PathRequest 하는것 중 Resources/static 에 위치한 것들은 SpringSecurity 를 적용하지 말아라.
+        // PathRequest 하는것 중 Resources/static 에 위치한 흔한것들은 SpringSecurity 를 적용하지 말아라.
+        // StaticResourceLocation에 흔한것들이 정의됨
         web.ignoring()
+                .mvcMatchers("/node_modules/**") // 추가필터
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }

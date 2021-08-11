@@ -57,7 +57,11 @@ public class AccountController {
 //            return "account/sign-up";
 //        }
 
-        accountService.saveNewAccount(AccountDto.SignUpForm2AccountDto.convert(signUpForm));
+        // 회원가입 완료
+        Account account = accountService.saveNewAccount(AccountDto.SignUpForm2AccountDto.convert(signUpForm));
+
+        // 이후 바로 로그인 시켜줌
+       accountService.login(account);
 
         return "redirect:/";
     }
@@ -78,8 +82,12 @@ public class AccountController {
             return path;
         }
 
+        // 사용자 인증까지 완료
         account.setEmailVerified(true);
         account.setJoinedAt(LocalDateTime.now());
+
+        // 이후 바로 로그인 시켜줌
+        accountService.login(account);
 
         model.addAttribute("numberOfUser", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());

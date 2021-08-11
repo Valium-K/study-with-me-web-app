@@ -1,47 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"><!--thymeleaf 사용하기 위한 xmlnamespace 설정-->
-<head>
-  <meta charset="UTF-8">
-  <title>StudyOlle</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <!--style은 head에 위치시켜 rendering 적용시켜 렌더링 될 때 스타일 적용시켜 읽히고-->
-  <style>
-    .container {
-      max-width: 100%;
-      margin: 0px;
-      padding: 0px;
-    }
-  </style>
-</head>
+<head th:replace="fragments.html::head"></head>
 <body class="bg-light">
 <div class="container">
-  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <a class="navbar-brand" href="/" th:href="@{/}"><!--thymeleaf로 렌더링 할때 href값을 이 값을 쓴다.-->
-      <img src="/images/logo.png" width="30" height="30">
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <form th:action="@{/search/study}" class="form-inline" method="get">
-            <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기">
-          </form>
-        </li>
-      </ul>
-
-      <ul class="navbar-nav .justify-content-end">
-        <li class="nav-item">
-          <a class="nav-link" href="#" th:href="@{/login}">로그인</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" th:href="@{/signup}">가입</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  <div th:replace="fragments.html::main-nav"></div>
 
   <div class="py-5 text-center" th:if="${error}">
     <p class="lead">스윗미 이메일 확인</p>
@@ -60,12 +22,7 @@
     <small class="text-info">이제부터 가입 때 사용한 이메일 또는 Id, Pw로 로그인 할 수 있습니다.</small>
   </div>
 
-  <footer th:fragment="footer">
-    <div class="row justify-content-center">
-      <img class="mb-2" src="/images/logo_kr.png" alt="" width="100">
-      <small class="d-block mb-3 text-muted">&copy; 2021</small>
-    </div>
-  </footer>
+  <div th:replace="fragments.html::footer"></div>
 </div>
 
 </body>
