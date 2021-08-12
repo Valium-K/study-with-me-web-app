@@ -4,15 +4,13 @@
 
 <head th:fragment="head">
   <meta charset="UTF-8">
-  <title>StudyOlle</title>
+  <title>StudyWithMe</title>
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
-  <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.css" />
   <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
   <!--style은 head에 위치시켜 rendering 적용시켜 렌더링 될 때 스타일 적용시켜 읽히고-->
   <style>
     .container {
-      margin: 0px;
-      padding: 0px;
       max-width: 100%;
     }
   </style>
@@ -21,14 +19,20 @@
 </head>
 
 <nav th:fragment="main-nav" class="navbar navbar-expand-sm navbar-dark bg-dark">
+
+<!--  홈으로-->
   <a class="navbar-brand" href="/" th:href="@{/}"><!--thymeleaf로 렌더링 할때 href값을 이 값을 쓴다.-->
     <img src="/images/logo_symbol.png" width="30" height="30">
   </a>
+
+<!--  반응형 메뉴-->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+<!--    스터디 검색-->
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <form th:action="@{/search/study}" class="form-inline" method="get">
@@ -36,6 +40,7 @@
         </form>
       </li>
     </ul>
+
 
     <ul class="navbar-nav .justify-content-end">
       <li class="nav-item" sec:authorize="!isAuthenticated()">
@@ -45,36 +50,38 @@
         <a class="nav-link" href="#" th:href="@{/sign-up}">가입</a>
       </li>
 
+<!--      알림-->
       <li class="nav-item" sec:authorize="isAuthenticated()">
         <a class="nav-link" href="#" th:href="@{/notifications}">
-          <i class="far fa-bell"></i>
+          <i class="fa fa-bell-o" aria-hidden="true"></i>
+
         </a>
       </li>
+
       <li class="nav-item" sec:authorize="isAuthenticated()">
         <a class="nav-link btn btn-outline-primary" href="#" th:href="@{/notifications}">
-          <i class="fas fa-plus"></i>스터디 개설
+          <i class="fa fa-plus" aria-hidden="true"></i> 스터디 개설
         </a>
       </li>
 
-      <li class="nav-item-dropdown" sec:authorize="isAuthenticated()">
+<!--      프로필 드롭다운-->
+      <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
-
-
-          <svg data-jdenticon-value="user127" th:data-jdenticon-value="${#authentication.name}"
+          <svg th:data-jdenticon-value="${#authentication.name}"
                width="24" height="24" class="rounded border bg-light"></svg>
-          <!--            <img th:if="${!#strings.isEmpty(account?.profileImage)}"-->
-          <!--                 th:src="${account.profileImage}" width="24" height="24" class="rounded border"/>-->
+<!--          <img th:if="${!#strings.isEmpty(account?.profileImage)}" th:src="${account.profileImage}"-->
+<!--               width="24" height="24" class="rounded border"/>-->
         </a>
         <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
           <h6 class="dropdown-header">
             <span sec:authentication="name">Username</span>
           </h6>
           <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}">프로필</a>
-          <a class="dropdown-item" href="#">스터디</a>
+          <a class="dropdown-item" >스터디</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" th:href="@{'/settings/profile'}">설정</a>
-          <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+          <a class="dropdown-item" href="#" th:href="@{'/settings/profile'}">설정</a>
+          <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
             <button class="dropdown-item" type="submit">로그아웃</button>
           </form>
         </div>
@@ -85,7 +92,7 @@
 
 <footer th:fragment="footer">
   <div class="row justify-content-center">
-    <img src="/images/logo_kr.png" />
+    <img src="/images/logo_kr.png" width="100"/>
     <small class="d-block mb-3 text-muted">&copy; 2021</small>
   </div>
 </footer>

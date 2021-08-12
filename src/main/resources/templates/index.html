@@ -3,10 +3,10 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments.html::head"></head>
 <body class="bg-light">
-<div class="container">
   <div th:replace="fragments.html::main-nav"></div>
+  <div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
+    스윗미 가입을 완료하려면 <a href="#" th:href="@{/check-email}" class="alert-link">계정 인증 이메일</a>을 확인하세요.
+  </div>
   <div th:replace="fragments.html::footer"></div>
-</div>
-
 </body>
 </html>

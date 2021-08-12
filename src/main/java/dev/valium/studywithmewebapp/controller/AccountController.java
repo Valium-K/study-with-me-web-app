@@ -1,7 +1,9 @@
 package dev.valium.studywithmewebapp.controller;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
+import dev.valium.studywithmewebapp.controller.dto.EmailVerificationForm;
 import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
+import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.controller.validator.SignUpFormValidator;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
@@ -9,6 +11,7 @@ import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -66,19 +69,63 @@ public class AccountController {
         return "redirect:/";
     }
 
-    @GetMapping("/check-email-token")
-    public String checkEmailToken(String token, String email, Model model) {
+    @GetMapping("/check-email")
+    public String checkEmailForm(Model model) {
+        EmailVerificationForm form = new EmailVerificationForm();
+        form.setToken("tempToken");
+        model.addAttribute(form);
+        return "account/pre-check-email";
+    }
 
-        Account account = accountRepository.findByEmail(email);
+    @PostMapping("/check-email")
+    public String checkEmail(@Valid EmailVerificationForm form, BindingResult result, Authentication authentication) {
+
+        if(result.hasErrors()) {
+            return "account/pre-check-email";
+        }
+
+        UserAccount account = (UserAccount) authentication.getPrincipal();
+
+        if(form.getEmail() == null || !form.getEmail().equals(account.getAccount().getEmail())) {
+            result.rejectValue("email", "invalid.email",
+                    new Object[]{form.getEmail()}, "가입하신 이메일과 입력한 이메일이 다릅니다.");
+            return "account/pre-check-email";
+        }
+
+        // TODO 이메일 인증 토큰 보내기
+
+        return "account/check-email";
+    }
+
+    @GetMapping("/check-email-token")
+    public String checkEmailTokenForm(Model model, Authentication authentication) {
+        EmailVerificationForm form = new EmailVerificationForm();
+        UserAccount account = (UserAccount) authentication.getPrincipal();
+        form.setEmail(account.getAccount().getEmail());
+
+        model.addAttribute(form);
+
+        return "account/check-email";
+    }
+
+    @PostMapping("/check-email-token")
+    public String checkEmailToken(@Valid EmailVerificationForm form, BindingResult result, Model model, Authentication authentication) {
+
+        String token = form.getToken();
+
+        Account account = accountRepository.findByEmail(form.getEmail());
+
         String path = "account/check-email";
 
         // TODO: Is that possible that account is NULL???
         if(account == null) {
-            model.addAttribute("error", "error.email");
+            result.rejectValue("token", "invalid.email",
+                    new Object[]{form.getEmail()}, "유효하지 않은 이메일입니다.");
             return path;
         }
         else if(!account.getEmailCheckToken().equals(token)) {
-            model.addAttribute("error", "error.token");
+            result.rejectValue("token", "invalid.token",
+                    new Object[]{form.getEmail()}, "토큰이 올바르지 않습니다.");
             return path;
         }
 
@@ -87,12 +134,11 @@ public class AccountController {
         account.setJoinedAt(LocalDateTime.now());
 
         // 이후 바로 로그인 시켜줌
-        accountService.login(account);
+        // accountService.login(account);
 
         model.addAttribute("numberOfUser", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());
 
         return path;
     }
-
 }

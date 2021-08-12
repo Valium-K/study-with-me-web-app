@@ -2,6 +2,7 @@ package dev.valium.studywithmewebapp.service;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
 import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
+import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +55,10 @@ public class AccountService {
     }
 
     public void login(Account account) {
-
-        // 생성자를 외부에서 쓰는것은 권장 되진 않지만, 이렇게 쓰는 이유는 DB에서 plane password를 알 수 없기 때문이다.
+        // 1. account를 받지만 막상 로그인 할 때 사용한 접근주체(Principal)에는 account가 없음에 유의
+        // 2. 이렇게 생성자를 외부에서 쓰는것은 권장 되진 않지만, 이렇게 쓰는 이유는 DB에서 plane password를 알 수 없기 때문이다.
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                account.getNickname(),
+                new UserAccount(account),
                 account.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
