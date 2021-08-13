@@ -6,6 +6,7 @@ import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.controller.validator.SignUpFormValidator;
 import dev.valium.studywithmewebapp.domain.Account;
+import dev.valium.studywithmewebapp.domain.CurrentUser;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -78,15 +79,15 @@ public class AccountController {
     }
 
     @PostMapping("/check-email")
-    public String checkEmail(@Valid EmailVerificationForm form, BindingResult result, Authentication authentication) {
+    public String checkEmail(@Valid EmailVerificationForm form, BindingResult result, @CurrentUser Account account) {
 
         if(result.hasErrors()) {
             return "account/pre-check-email";
         }
 
-        UserAccount account = (UserAccount) authentication.getPrincipal();
+        // UserAccount account = (UserAccount) authentication.getPrincipal();
 
-        if(form.getEmail() == null || !form.getEmail().equals(account.getAccount().getEmail())) {
+        if(form.getEmail() == null || !form.getEmail().equals(account.getEmail())) {
             result.rejectValue("email", "invalid.email",
                     new Object[]{form.getEmail()}, "가입하신 이메일과 입력한 이메일이 다릅니다.");
             return "account/pre-check-email";
@@ -98,10 +99,10 @@ public class AccountController {
     }
 
     @GetMapping("/check-email-token")
-    public String checkEmailTokenForm(Model model, Authentication authentication) {
+    public String checkEmailTokenForm(Model model, @CurrentUser Account account) {
         EmailVerificationForm form = new EmailVerificationForm();
-        UserAccount account = (UserAccount) authentication.getPrincipal();
-        form.setEmail(account.getAccount().getEmail());
+        // UserAccount account = (UserAccount) authentication.getPrincipal();
+        form.setEmail(account.getEmail());
 
         model.addAttribute(form);
 
@@ -109,17 +110,17 @@ public class AccountController {
     }
 
     @PostMapping("/check-email-token")
-    public String checkEmailToken(@Valid EmailVerificationForm form, BindingResult result, Model model, Authentication authentication) {
+    public String checkEmailToken(@Valid EmailVerificationForm form, BindingResult result, Model model, @CurrentUser Account account) {
 
         String token = form.getToken();
 
-        Account account = accountRepository.findByEmail(form.getEmail());
+        // Account account = accountRepository.findByEmail(form.getEmail());
 
         String path = "account/check-email";
 
-        // TODO: Is that possible that account is NULL???
+        // TODO: Is that possible that account is NULL??? - 스프링 시큐리티를 통한 유저정보를 가져올 때 사용하는 것이였다.
         if(account == null) {
-            result.rejectValue("token", "invalid.email",
+            result.rejectValue("email", "invalid.email",
                     new Object[]{form.getEmail()}, "유효하지 않은 이메일입니다.");
             return path;
         }
@@ -139,6 +140,6 @@ public class AccountController {
         model.addAttribute("numberOfUser", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());
 
-        return path;
+        return "account/post-check-email";
     }
 }

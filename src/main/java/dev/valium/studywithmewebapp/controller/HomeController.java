@@ -1,6 +1,7 @@
 package dev.valium.studywithmewebapp.controller;
 
 import dev.valium.studywithmewebapp.domain.Account;
+import dev.valium.studywithmewebapp.domain.CurrentUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,14 +20,8 @@ public class HomeController {
         return "index";
     }
 
-    @Target({ ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
-    @Retention(RetentionPolicy.RUNTIME)
-    @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : account")
-    protected @interface CurrentUser {
-        // spring boot의 기능인 에노테이션 상속(순수 java는 안됨)을 이용해 애노테이션 길이를 줄였다.
-        // 이 애노테이션을 참조하는 현재 객체가 anonymousUser면 null 아니면 account 설정
-        // account라는 것은 UserAccount의 필드객체 명으로, 서로 이름이 같아야한다.
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
-
-
 }

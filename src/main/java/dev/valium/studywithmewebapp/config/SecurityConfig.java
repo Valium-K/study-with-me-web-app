@@ -17,11 +17,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .mvcMatchers("/", "/login", "/sign-up", "/check-email",
+                .mvcMatchers("/", "/login", "/sign-up",
                         "/check-email-token", "/email-login", "/check-email-login",
                         "/login-link").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()      // profile은 get만
                 .anyRequest().authenticated();      // 그 외 링크는 모두 인증 필요
+
+        // spring security를 통한 로그인, 로그아웃 기능
+        http.formLogin()                // 폼 로그인 기능 활성화
+                .loginPage("/login")   // 커스텀 로그인 페이지 설정
+                .permitAll();
+
+        http.logout()                   // 로그아웃 기능 활성화
+                .logoutSuccessUrl("/"); // 로그아웃 시 갈 url
     }
 
     @Override
