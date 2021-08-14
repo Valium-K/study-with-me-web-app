@@ -55,5 +55,6 @@ public String home(@CurrentUser Account account, Model model) {
   * spring security filter를 먼저 거치기에 controller 같은 handler를 만들 필요가 없다.
   * 단지 UserDetailsService를 확장하면된다.
   
+* 뷰에서 id, pw의 참조 기본명은 username, password이다.
   > SecurityConfig.java에는 logout도 설정이 돼있는데 logout은 이후 별다른 구현/설정이 필요가 없다.
   > 그 이유는 login 때 등록한 UserDetailsService bean을 사용하기 때문이다. 

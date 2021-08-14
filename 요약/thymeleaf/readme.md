@@ -1,14 +1,17 @@
 Thymeleaf
 =========
-### 태그 및 속성
-* `th:속성`: 기존 태그의 속성을 Thymeleaf를 사용해 랜더링한다.
+## 속성
+### th:속성
+기존 태그의 속성을 Thymeleaf를 사용해 랜더링한다.
   * 가령 <a href="/" th:href="@{/} /> 같은 태그에서
     * Pure HTML: href 속성 사용
     * Thymeleaf 사용: href 가 아닌 th:href 로 매핑된다.
-    
 > 사실 권장은 한 태그에 기본속성 + Thymeleaf 속성을 같이 써주는 것이지만, th 속성만 쓰는경우가 많다.
-* `href=@{/}`: servlet context 의 루트경로 
-  
+
+#
+
+### href=@{/}
+servlet context 의 루트경로
 * `<form th:object=${camelCaseObject}>`
     * `th:object=${camelCaseObject}`: form 태그를 채우는 객체로 사용
         * 객체의 필드는 `th:field=*{camelCaseProperty}` 형태로 참조 가능하다.
@@ -17,15 +20,25 @@ Thymeleaf
 > 즉, 속성명을 엔티티의 필드와 동일하게 맞추면 여러모로 편해진다.
 > 만약 Model에 값이 들어온 채로 넘오온다면, value 속성도 같이 정의한다.
 
+#
 
-### 예외처리
-#### required 이하 항목을 예외처리
+### justify-content-center
+중앙정렬
+
+### [Spacing](https://minaminaworld.tistory.com/136)
+{sides}{breakpoint}-{size} 형식
+
+
+
+## 예외처리
+### required 이하 항목을 예외처리
 ```html
 <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
                        placeholder="닉네임을 입력하세요" aria-describedby="nicknameHelp" required minlength="3" maxlength="20">
                 
 ```
-#### form-submit 전 확인
+
+### form-submit 전 확인
 ```javascript
     (function () {
         'use strict';
@@ -52,8 +65,8 @@ Thymeleaf
     }())
 ```
 
-### Thymeleaf extras: spring-security
-* spring security5를 지원하는 확장팩
-    * dependency: `implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'`
-    * nameSpace: `xml:sec="http://www.thymeleaf.org/extras/spring-security"`
+## Thymeleaf extras: spring-security
+spring security5를 지원하는 확장팩
+  * dependency: `implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'`
+  * nameSpace: `xml:sec="http://www.thymeleaf.org/extras/spring-security"`
     
