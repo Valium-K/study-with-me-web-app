@@ -1,6 +1,7 @@
 package dev.valium.studywithmewebapp.service;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
+import dev.valium.studywithmewebapp.controller.dto.Profile;
 import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.domain.Account;
@@ -19,17 +20,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
+
     public Account saveNewAccount(AccountDto signUpForm) {
         Account newAccount = accountRepository.save(Account.builder()
                 .email(signUpForm.getEmail())
@@ -70,6 +73,7 @@ public class AccountService implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
 
         // 이메일 혹은 닉네임으로 조회
@@ -85,6 +89,21 @@ public class AccountService implements UserDetailsService {
 
         // 잘 찾으면 Principal 객체를 넘겨준다.
         return new UserAccount(account);
+    }
+
+    public void completeVerification(Account account) {
+        account.setEmailVerified(true);
+        account.setJoinedAt(LocalDateTime.now());
+    }
+
+    public void updateProfile(Account account, Profile profile) {
+
+        account.setBio(profile.getBio());
+        account.setUrl(profile.getUrl());
+        account.setOccupation(profile.getOccupation());
+        account.setLocation(profile.getLocation());
+
+        accountRepository.save(account);
     }
 }
 

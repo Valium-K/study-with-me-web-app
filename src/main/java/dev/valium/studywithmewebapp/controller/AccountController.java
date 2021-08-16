@@ -115,25 +115,25 @@ public class AccountController {
 
         String token = form.getToken();
 
-        // Account account = accountRepository.findByEmail(form.getEmail());
+        Account accounta = accountRepository.findByEmail(account.getEmail());
 
         String path = "account/check-email";
 
         // TODO: Is that possible that account is NULL??? - 스프링 시큐리티를 통한 유저정보를 가져올 때 사용하는 것이였다.
-        if(account == null) {
+        if(accounta == null) {
             result.rejectValue("email", "invalid.email",
                     new Object[]{form.getEmail()}, "유효하지 않은 이메일입니다.");
             return path;
         }
-        else if(!account.getEmailCheckToken().equals(token)) {
+        else if(!accounta.getEmailCheckToken().equals(token)) {
             result.rejectValue("token", "invalid.token",
                     new Object[]{form.getEmail()}, "토큰이 올바르지 않습니다.");
             return path;
         }
 
         // 사용자 인증까지 완료
-        account.setEmailVerified(true);
-        account.setJoinedAt(LocalDateTime.now());
+        accountService.completeVerification(accounta);
+
 
         // 이후 바로 로그인 시켜줌
         // accountService.login(account);

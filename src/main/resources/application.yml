@@ -9,8 +9,8 @@ spring:
       ddl-auto: create   # App 실행시점에 table 을 삭제 후 재생성
     properties:
       hibernate:
-        # show_sql: true
-        format-sql: true
+        show_sql: true
+        format_sql: true
   profiles:
     active: local
 

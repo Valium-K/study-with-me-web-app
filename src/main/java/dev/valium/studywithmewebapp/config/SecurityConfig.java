@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/", "/login", "/sign-up",
                         "/check-email-token", "/email-login", "/check-email-login",
                         "/login-link").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()      // profile은 get만
+                .mvcMatchers(HttpMethod.GET, "/Profile/*").permitAll()      // profile은 get만
                 .anyRequest().authenticated();      // 그 외 링크는 모두 인증 필요
 
         // spring security를 통한 로그인, 로그아웃 기능

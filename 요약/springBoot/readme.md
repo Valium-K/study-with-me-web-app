@@ -2,8 +2,9 @@ springBoot
 ==========
 ### Basic
 * `@ModelAttribute`는 파라미터로 받을 때는 생략가능
+  * 기본생성자를 만든 후 setter를 이용해 설정하기에 기본생성자가 없으면 `nullpointerexception`이다.
 * BindingResult는 Errors interface를 상속받은것.
-
+* 컨트롤러에서 `return redirect:CURRENT_URL`은 폼 submit 후 form이 재전송 되는것을 막는 용도로 사용 할 수 있다. 
 ### Validator
 #### Custom Validator 사용
 ```java
