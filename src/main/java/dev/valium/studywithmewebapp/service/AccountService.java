@@ -1,8 +1,8 @@
 package dev.valium.studywithmewebapp.service;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
-import dev.valium.studywithmewebapp.controller.dto.Profile;
-import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
+import dev.valium.studywithmewebapp.controller.dto.settings.Password;
+import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
@@ -33,6 +33,7 @@ public class AccountService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
 
+    // TODO select, select, insert, update 쿼리최적화 필요
     public Account saveNewAccount(AccountDto signUpForm) {
         Account newAccount = accountRepository.save(Account.builder()
                 .email(signUpForm.getEmail())
@@ -102,8 +103,16 @@ public class AccountService implements UserDetailsService {
         account.setUrl(profile.getUrl());
         account.setOccupation(profile.getOccupation());
         account.setLocation(profile.getLocation());
+        account.setProfileImage(profile.getProfileImage());
 
         accountRepository.save(account);
+    }
+
+    public void updatePassword(Password password, Account account) {
+        Account foundAccount = accountRepository.findByNickname(account.getNickname());
+        String encodedPassword = passwordEncoder.encode(password.getPassword());
+
+        foundAccount.setPassword(encodedPassword);
     }
 }
 

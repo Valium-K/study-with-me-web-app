@@ -1,15 +1,22 @@
-package dev.valium.studywithmewebapp.controller.dto;
+package dev.valium.studywithmewebapp.controller.dto.settings;
 
 import dev.valium.studywithmewebapp.domain.Account;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 @Data
 public class Profile {
 
+    @Length(max = 35)
     private String bio;
+    @Length(max = 50)
     private String url;
+    @Length(max = 50)
     private String occupation;
+    @Length(max = 50)
     private String location;
+
+    private String profileImage;
 
     public Profile () {}
     public Profile (Account account) {
@@ -17,5 +24,6 @@ public class Profile {
         this.url = account.getUrl();
         this.occupation = account.getOccupation();
         this.location = account.getLocation();
+        this.profileImage = account.getProfileImage();
     }
 }
