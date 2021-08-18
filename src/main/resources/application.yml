@@ -17,3 +17,9 @@ spring:
 logging:
   level:
     org.hibernte.SQL: debug   # JPA / Hibernate 가 생성하는 디버그단 로깅
+
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true

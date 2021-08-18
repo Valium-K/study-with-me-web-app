@@ -1,5 +1,6 @@
 package dev.valium.studywithmewebapp.domain;
 
+import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import lombok.*;
 
 import javax.persistence.*;
@@ -44,5 +45,14 @@ public class Account {
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();    // TODO 한 번 쓰는 UUID를 Account 테이블에 넣어야 할까??? 고민해보기.
+    }
+
+    public void updateNotification(Notifications notifications) {
+        this.setStudyCreatedByEmail(notifications.isStudyCreatedByEmail());
+        this.setStudyCreatedByWeb(notifications.isStudyCreatedByWeb());
+        this.setStudyEnrollmentResultByEmail(notifications.isStudyEnrollmentResultByEmail());
+        this.setStudyUpdatedByWeb(notifications.isStudyUpdatedByWeb());
+        this.setStudyUpdatedByEmail(notifications.isStudyUpdatedByEmail());
+        this.setStudyEnrollmentResultByWeb(notifications.isStudyEnrollmentResultByWeb());
     }
 }

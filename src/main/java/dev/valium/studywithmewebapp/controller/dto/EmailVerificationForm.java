@@ -10,8 +10,6 @@ import javax.validation.constraints.Pattern;
 @Data
 public class EmailVerificationForm {
 
-    @Email
-    private String email;
-
+    @NotBlank
     private String token;
 }

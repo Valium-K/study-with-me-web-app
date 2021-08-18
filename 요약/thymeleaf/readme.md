@@ -70,3 +70,6 @@ spring security5를 지원하는 확장팩
   * dependency: `implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'`
   * nameSpace: `xml:sec="http://www.thymeleaf.org/extras/spring-security"`
     
+## 필드에러 처리
+필드에 오류가 있을 경우에만 특정 태그를 표시하고 싶다면 해당 태그에 th:if="${#fields.hasErrors('필드이름')"을 설정한다.    
+th:errors="*{필드이름}"을 함께 설정하면 태그 안에 있는 문자열을 대상 필드에 관련된 에러 메시지로 치환할 수 있다.

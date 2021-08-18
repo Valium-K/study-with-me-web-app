@@ -1,6 +1,7 @@
 package dev.valium.studywithmewebapp.service;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
+import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
@@ -105,14 +106,26 @@ public class AccountService implements UserDetailsService {
         account.setLocation(profile.getLocation());
         account.setProfileImage(profile.getProfileImage());
 
+        // account객체는 단순 JAVA객체가 아닌 준영속 상태 객체이다.
+        // 즉 해당 id를 JPA가 알고있기 때문에 .isNew()시에 merge()가 호출된다.
+        // 이것을 잘 알지 못한다면 버그로 이어질 수 있기에
+        // 아래의 메서드의 방법인 EntityManager의 1차 캐시에 넣어 사용하는것이 바람직하다.
         accountRepository.save(account);
     }
 
     public void updatePassword(Password password, Account account) {
+        // 준영속상태의 객체이지만, 명시적으로 영속상태로 바꾸어 변경감지를 이용한 update를 한다.
         Account foundAccount = accountRepository.findByNickname(account.getNickname());
         String encodedPassword = passwordEncoder.encode(password.getPassword());
 
         foundAccount.setPassword(encodedPassword);
+    }
+
+
+    public void updateNotification(Notifications notifications, Account account) {
+        Account foundAccount = accountRepository.findByNickname(account.getNickname());
+
+        foundAccount.updateNotification(notifications);
     }
 }
 

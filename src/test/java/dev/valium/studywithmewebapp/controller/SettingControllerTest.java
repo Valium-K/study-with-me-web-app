@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,7 +30,7 @@ class SettingControllerTest {
     @Autowired MockMvc mockMvc;
     @Autowired AccountService accountService;
     @Autowired AccountRepository accountRepository;
-
+    @Autowired PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void beforeEach() {
@@ -91,6 +92,22 @@ class SettingControllerTest {
 
         Account tempUser = accountRepository.findByNickname("tempUser");
         assertEquals(bio, tempUser.getBio());
+    }
+
+    @WithUserDetails(value = "tempUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @Test
+    public void 패스워드_수정_정상() throws Exception {
+
+        mockMvc.perform(post(SettingController.SETTINGS_PASSWORD_URL)
+                    .param("password", "12341234")
+                    .param("passwordConfirm", "12341234")
+                    .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(SettingController.SETTINGS_PASSWORD_URL))
+                .andExpect(flash().attributeExists("message"));
+
+        Account tempUser = accountRepository.findByNickname("tempUser");
+        assertTrue(passwordEncoder.matches("12341234", tempUser.getPassword()));
     }
 
 }

@@ -9,59 +9,34 @@
       <h2>스윗미 이메일 인증</h2>
     </div>
 
-
     <div class="row justify-content-center">
       <form class="needs-validation col-sm-6" action="#"
-            th:action="@{/check-email-token}" th:object="${emailVerificationForm}" method="post" novalidate>
+            th:action="@{/check-email}" th:object="${emailVerificationForm}" method="post" novalidate>
 
         <div class="form-group">
           <label for="token">토큰</label>
           <input id="token" type="text" th:field="*{token}" class="form-control"
-                 placeholder="token" aria-describedby="tokenHelp">
+                 placeholder="token" aria-describedby="tokenHelp" required>
           <small id="tokenHelp" class="form-text text-muted">
             받은 이메일의 토큰을 입력하세요.
           </small>
-
           <small class="invalid-feedback">토큰을 입력하세요.</small>
-          <small class="form-text text-danger" th:if="${#fields.hasErrors('token')}" th:errors="*{token}">token Error</small>
-          <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">token Error</small>
-        </div>
+          <small class="form-text text-danger" th:if="${#fields.hasErrors('token')}" th:errors="*{token}">
+            (default message) 토큰이 올바르지 않습니다.
+          </small>
 
-        <div class="form-group">
-          <button class="btn btn-primary btn-block" type="submit"
-                  aria-describedby="submitHelp">제출</button>
+          <p></p>
+          <div class="form-group">
+            <button class="btn btn-primary btn-block" type="submit"
+                    aria-describedby="submitHelp">제출
+            </button>
+          </div>
         </div>
       </form>
     </div>
+    <div th:replace="fragments.html::footer"></div>
   </div>
 
-
-
-
-
-
-<!--  &lt;!&ndash;  post 후 인증실패&ndash;&gt;-->
-<!--  <div class="py-5 text-center" th:if="${error}">-->
-<!--    <p class="lead">스윗미 이메일 확인</p>-->
-
-<!--    <div class="alert alert-danger" role="alert">-->
-<!--      이메일 확인 링크가 정확하지 않습니다.-->
-<!--    </div>-->
-<!--  </div>-->
-<!--get 후 토큰입력-->
-
-<!--  post 후 인증 성공-->
-<!--  <div class="py-5 text-center" th:if="${error == null}">-->
-<!--    <p class="lead">스윗미 이메일 확인</p>-->
-<!--    <h2>-->
-<!--      이메일을 확인했습니다.-->
-<!--      <span th:text="${numberOfUser}">#</span>번 째 회원,-->
-<!--      <span th:text="${nickname}">User</span>님 가입을 축하합니다.-->
-<!--    </h2>-->
-<!--    <small class="text-info">이제부터 가입 때 사용한 이메일 또는 Id, Pw로 로그인 할 수 있습니다.</small>-->
-<!--  </div>-->
-
-  <div th:replace="fragments.html::footer"></div>
 </body>
 <script th:replace="fragments.html :: form-validation"></script>
 </html>

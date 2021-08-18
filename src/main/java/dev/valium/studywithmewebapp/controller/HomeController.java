@@ -22,6 +22,7 @@ public class HomeController {
 
     @GetMapping("/login")
     public String login() {
+        // TODO password, email 총 쿼리 2번 - 최적화 필요
         return "login";
     }
 }

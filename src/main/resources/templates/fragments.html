@@ -11,7 +11,21 @@
   <!--style은 head에 위치시켜 rendering 적용시켜 렌더링 될 때 스타일 적용시켜 읽히고-->
   <style>
     .container {
-      max-width: 100%;
+      width: 75%;
+    }
+
+    @media (max-width: 1000px) {
+      .container {
+        width: 80%;
+        min-width: 720px;
+      }
+    }
+
+    @media (max-width: 575px) {
+      .container {
+        min-width: 400px;
+        width: 100%;
+      }
     }
   </style>
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
