@@ -1,6 +1,7 @@
 package dev.valium.studywithmewebapp.service;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
+import dev.valium.studywithmewebapp.controller.dto.settings.AccountForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -126,6 +128,13 @@ public class AccountService implements UserDetailsService {
         Account foundAccount = accountRepository.findByNickname(account.getNickname());
 
         foundAccount.updateNotification(notifications);
+    }
+
+    public void updateNickname(@Valid AccountForm accountForm, Account account) {
+        Account foundAccount = accountRepository.findByNickname(account.getNickname());
+
+        foundAccount.setNickname(accountForm.getNickname());
+        login(foundAccount);
     }
 }
 

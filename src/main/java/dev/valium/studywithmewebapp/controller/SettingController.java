@@ -1,5 +1,6 @@
 package dev.valium.studywithmewebapp.controller;
 
+import dev.valium.studywithmewebapp.controller.dto.settings.AccountForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
@@ -22,12 +23,15 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class SettingController {
 
+
     static final String SETTINGS_PROFILE_VIEW_NAME = "settings/profile";
     static final String SETTINGS_PROFILE_URL = "/settings/profile";
     static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
     static final String SETTINGS_PASSWORD_URL = "/settings/password";
     static final String SETTINGS_NOTIFICATION_VIEW_NAME = "settings/notifications";
     static final String SETTINGS_NOTIFICATION_URL = "/settings/notifications";
+    static final String SETTINGS_ACCOUNT_VIEW_NAME = "settings/account";
+    static final String SETTINGS_ACCOUNT_URL = "/settings/account";
 
     private final AccountService accountService;
 
@@ -112,4 +116,38 @@ public class SettingController {
 
         return SETTINGS_NOTIFICATION_VIEW_NAME;
     }
+
+    @GetMapping(SETTINGS_ACCOUNT_URL)
+    public String accountUpdateForm(@CurrentUser Account account, Model model) {
+        model.addAttribute(account);
+        model.addAttribute(new AccountForm());
+
+        return SETTINGS_ACCOUNT_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_ACCOUNT_URL)
+    public String updateAccount(@CurrentUser Account account, Model model,
+                                     @Valid AccountForm accountForm, BindingResult result,
+                                     RedirectAttributes attributes) {
+
+        if(result.hasErrors()) {
+            model.addAttribute(account);
+            return SETTINGS_ACCOUNT_VIEW_NAME;
+        }
+
+        if(accountForm.getNickname().equals(account.getNickname())) {
+            result.rejectValue("nickname", "duplicated.nickname"
+                    , "이전 닉네임과 동일합니다.");
+
+            return SETTINGS_ACCOUNT_VIEW_NAME;
+        }
+
+        accountService.updateNickname(accountForm, account);
+
+        attributes.addFlashAttribute("message", "닉네임을 수정하였습니다.");
+        model.addAttribute(accountForm);
+
+        return "redirect:" + SETTINGS_ACCOUNT_URL;
+    }
+
 }
