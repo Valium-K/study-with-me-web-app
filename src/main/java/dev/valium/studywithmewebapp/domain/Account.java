@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +15,7 @@ import java.util.UUID;
 public class Account {
 
     @Id @GeneratedValue
+    @Column(name = "account_id")
     private Long id;
 
     // 유저 - 이메일 / 아이디 로그인 가능
@@ -42,6 +45,10 @@ public class Account {
     private boolean studyEnrollmentResultByWeb;
     private boolean studyUpdatedByEmail;
     private boolean studyUpdatedByWeb;
+
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<Account2Tag> account2Tags = new HashSet<>();
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();    // TODO 한 번 쓰는 UUID를 Account 테이블에 넣어야 할까??? 고민해보기.

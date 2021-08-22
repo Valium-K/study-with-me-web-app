@@ -1,23 +1,32 @@
 package dev.valium.studywithmewebapp.controller;
 
+import dev.valium.studywithmewebapp.controller.dto.form.TagForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.AccountForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.domain.Account;
+import dev.valium.studywithmewebapp.domain.Account2Tag;
 import dev.valium.studywithmewebapp.domain.CurrentUser;
+import dev.valium.studywithmewebapp.domain.Tag;
+import dev.valium.studywithmewebapp.repository.TagRepository;
+import dev.valium.studywithmewebapp.service.Account2TagService;
 import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.dom4j.rule.Mode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PreUpdate;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +42,13 @@ public class SettingController {
     static final String SETTINGS_ACCOUNT_VIEW_NAME = "settings/account";
     static final String SETTINGS_ACCOUNT_URL = "/settings/account";
 
+    static final String SETTINGS_TAG_VIEW_NAME = "settings/tags";
+    static final String SETTINGS_TAG_URL = "/settings/tags";
+
+
     private final AccountService accountService;
+    private final TagRepository tagRepository;
+    private final Account2TagService account2TagService;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
@@ -150,4 +165,24 @@ public class SettingController {
         return "redirect:" + SETTINGS_ACCOUNT_URL;
     }
 
+    @GetMapping(SETTINGS_TAG_URL)
+    public String updateTags(@CurrentUser Account account, Model model) {
+        model.addAttribute(account);
+
+        return SETTINGS_TAG_VIEW_NAME;
+    }
+
+    @PostMapping("/settings/tags/add")
+    @ResponseBody
+    public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        String title = tagForm.getTagTitle();
+
+        Tag tag = tagRepository.findByTitle(title).orElseGet(() ->
+                tagRepository.save(Tag.builder().title(title).build())
+        );
+
+        accountService.addTag(account, tag);
+
+        return ResponseEntity.ok().build();
+    }
 }

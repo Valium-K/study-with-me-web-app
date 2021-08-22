@@ -1,6 +1,6 @@
 package dev.valium.studywithmewebapp.controller.validator;
 
-import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
+import dev.valium.studywithmewebapp.controller.dto.form.SignUpForm;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

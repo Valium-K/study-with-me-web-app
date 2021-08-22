@@ -7,6 +7,8 @@ import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.domain.Account;
+import dev.valium.studywithmewebapp.domain.Account2Tag;
+import dev.valium.studywithmewebapp.domain.Tag;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,6 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
-
 
     // TODO select, select, insert, update 쿼리최적화 필요
     public Account saveNewAccount(AccountDto signUpForm) {
@@ -135,6 +137,14 @@ public class AccountService implements UserDetailsService {
 
         foundAccount.setNickname(accountForm.getNickname());
         login(foundAccount);
+    }
+
+    public void addTag(Account account, Tag tag) {
+        Optional<Account> foundAccount = accountRepository.findById(account.getId());
+
+        foundAccount.ifPresent(a -> {
+            a.getAccount2Tags().add(Account2Tag.builder().tag(tag).account(a).build());
+        });
     }
 }
 

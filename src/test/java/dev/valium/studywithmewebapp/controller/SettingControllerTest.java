@@ -1,7 +1,7 @@
 package dev.valium.studywithmewebapp.controller;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
-import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
+import dev.valium.studywithmewebapp.controller.dto.form.SignUpForm;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;

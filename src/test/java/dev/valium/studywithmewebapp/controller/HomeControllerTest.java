@@ -1,12 +1,10 @@
 package dev.valium.studywithmewebapp.controller;
 
-import dev.valium.studywithmewebapp.controller.dto.AccountDto;
-import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
+import dev.valium.studywithmewebapp.controller.dto.form.SignUpForm;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.persistence.EntityManager;
 
 import static dev.valium.studywithmewebapp.controller.dto.AccountDto.SignUpForm2AccountDto.convert;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;

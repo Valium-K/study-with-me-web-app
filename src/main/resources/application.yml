@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create   # App 실행시점에 table 을 삭제 후 재생성
+      ddl-auto: create-drop   # App 실행시점에 table 을 삭제 후 재생성
     properties:
       hibernate:
         show_sql: true

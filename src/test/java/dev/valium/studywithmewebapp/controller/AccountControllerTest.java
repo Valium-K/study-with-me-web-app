@@ -1,11 +1,8 @@
 package dev.valium.studywithmewebapp.controller;
 
-import dev.valium.studywithmewebapp.controller.dto.AccountDto;
-import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

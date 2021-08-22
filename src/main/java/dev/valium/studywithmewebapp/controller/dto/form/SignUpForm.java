@@ -1,4 +1,4 @@
-package dev.valium.studywithmewebapp.controller.dto;
+package dev.valium.studywithmewebapp.controller.dto.form;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

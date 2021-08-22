@@ -2,17 +2,13 @@ package dev.valium.studywithmewebapp.controller;
 
 import dev.valium.studywithmewebapp.controller.dto.AccountDto;
 import dev.valium.studywithmewebapp.controller.dto.EmailVerificationForm;
-import dev.valium.studywithmewebapp.controller.dto.SignUpForm;
-import dev.valium.studywithmewebapp.controller.dto.UserAccount;
+import dev.valium.studywithmewebapp.controller.dto.form.SignUpForm;
 import dev.valium.studywithmewebapp.controller.validator.SignUpFormValidator;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.domain.CurrentUser;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
