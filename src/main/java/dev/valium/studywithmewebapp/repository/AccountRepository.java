@@ -16,6 +16,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             "from Account a where a.email = :email")
     AccountDto findDtoByEmail(@Param("email") String email);
 
+    @Query("select a from Account a join fetch a.topicOfInterests at where a.id = :id")
+    Optional<Account> findByIdWithTags(@Param("id") Long id);
+
     @Transactional
     Account findByEmail(String email);
     Account findReadOnlyByEmail(String email);

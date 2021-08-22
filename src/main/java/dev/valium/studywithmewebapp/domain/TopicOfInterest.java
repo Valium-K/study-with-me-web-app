@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account2Tag {
+public class TopicOfInterest {
 
     @Id @GeneratedValue
     private Long id;
@@ -22,4 +22,7 @@ public class Account2Tag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
+    public static TopicOfInterest createTopicOfInterest(Account account, Tag tag) {
+        return TopicOfInterest.builder().tag(tag).account(account).build();
+    }
 }

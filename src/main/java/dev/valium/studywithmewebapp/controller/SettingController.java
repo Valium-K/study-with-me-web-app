@@ -6,14 +6,11 @@ import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.domain.Account;
-import dev.valium.studywithmewebapp.domain.Account2Tag;
 import dev.valium.studywithmewebapp.domain.CurrentUser;
 import dev.valium.studywithmewebapp.domain.Tag;
 import dev.valium.studywithmewebapp.repository.TagRepository;
-import dev.valium.studywithmewebapp.service.Account2TagService;
 import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.dom4j.rule.Mode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.PreUpdate;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,7 +43,6 @@ public class SettingController {
 
     private final AccountService accountService;
     private final TagRepository tagRepository;
-    private final Account2TagService account2TagService;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
@@ -178,10 +172,10 @@ public class SettingController {
         String title = tagForm.getTagTitle();
 
         Tag tag = tagRepository.findByTitle(title).orElseGet(() ->
-                tagRepository.save(Tag.builder().title(title).build())
+                tagRepository.save(Tag.createTag(title))
         );
 
-        accountService.addTag(account, tag);
+        accountService.addTopicOfInterest(account, tag);
 
         return ResponseEntity.ok().build();
     }

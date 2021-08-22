@@ -7,7 +7,7 @@ import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
 import dev.valium.studywithmewebapp.domain.Account;
-import dev.valium.studywithmewebapp.domain.Account2Tag;
+import dev.valium.studywithmewebapp.domain.TopicOfInterest;
 import dev.valium.studywithmewebapp.domain.Tag;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -139,11 +139,11 @@ public class AccountService implements UserDetailsService {
         login(foundAccount);
     }
 
-    public void addTag(Account account, Tag tag) {
-        Optional<Account> foundAccount = accountRepository.findById(account.getId());
+    public void addTopicOfInterest(Account account, Tag tag) {
+        Optional<Account> foundAccount = accountRepository.findByIdWithTags(account.getId());
 
         foundAccount.ifPresent(a -> {
-            a.getAccount2Tags().add(Account2Tag.builder().tag(tag).account(a).build());
+            a.getTopicOfInterests().add(TopicOfInterest.createTopicOfInterest(account, tag));
         });
     }
 }

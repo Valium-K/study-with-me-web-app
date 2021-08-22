@@ -17,7 +17,10 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String title;
 
+    public static Tag createTag(String tagName) {
+        return Tag.builder().title(tagName).build();
+    }
     // 단방향
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
-    private Set<Account2Tag> account2Tags;
+    // @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    // private Set<TopicOfInterest> accountTags;
 }

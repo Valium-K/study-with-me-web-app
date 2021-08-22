@@ -47,8 +47,10 @@ public class Account {
     private boolean studyUpdatedByWeb;
 
 
+    // 관심주제
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private Set<Account2Tag> account2Tags = new HashSet<>();
+    private Set<TopicOfInterest> topicOfInterests = new HashSet<>();
+
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();    // TODO 한 번 쓰는 UUID를 Account 테이블에 넣어야 할까??? 고민해보기.
