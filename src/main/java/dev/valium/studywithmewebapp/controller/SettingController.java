@@ -8,7 +8,9 @@ import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.domain.CurrentUser;
 import dev.valium.studywithmewebapp.domain.Tag;
+import dev.valium.studywithmewebapp.domain.TopicOfInterest;
 import dev.valium.studywithmewebapp.repository.TagRepository;
+import dev.valium.studywithmewebapp.repository.TopicOfInterestRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,6 +48,7 @@ public class SettingController {
 
     private final AccountService accountService;
     private final TagRepository tagRepository;
+    private final TopicOfInterestRepository topicOfInterestRepository;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
@@ -162,7 +168,10 @@ public class SettingController {
     @GetMapping(SETTINGS_TAG_URL)
     public String updateTags(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
+        Set<TopicOfInterest> tois = topicOfInterestRepository.findTopicOfInterestsByAccount_Id(account.getId());
+        List<String> tags = tois.stream().map(toi -> toi.getTag().getTitle()).collect(Collectors.toList());
 
+        model.addAttribute("tags", tags);
         return SETTINGS_TAG_VIEW_NAME;
     }
 

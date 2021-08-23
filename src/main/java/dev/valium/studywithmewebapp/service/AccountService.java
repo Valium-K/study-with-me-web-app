@@ -140,10 +140,13 @@ public class AccountService implements UserDetailsService {
     }
 
     public void addTopicOfInterest(Account account, Tag tag) {
-        Optional<Account> foundAccount = accountRepository.findByIdWithTags(account.getId());
+        Optional<Account> foundAccount = accountRepository.findById(account.getId());
 
         foundAccount.ifPresent(a -> {
-            a.getTopicOfInterests().add(TopicOfInterest.createTopicOfInterest(account, tag));
+            TopicOfInterest topicOfInterest = TopicOfInterest.createTopicOfInterest(account, tag);
+
+            a.getTopicOfInterests().add(topicOfInterest);
+            topicOfInterest.setAccount(account); // 1차 캐시 양방향 매핑용
         });
     }
 }

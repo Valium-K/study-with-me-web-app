@@ -17,6 +17,7 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String title;
 
+
     public static Tag createTag(String tagName) {
         return Tag.builder().title(tagName).build();
     }
