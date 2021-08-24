@@ -10,6 +10,7 @@ import dev.valium.studywithmewebapp.domain.Account;
 import dev.valium.studywithmewebapp.domain.TopicOfInterest;
 import dev.valium.studywithmewebapp.domain.Tag;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
+import dev.valium.studywithmewebapp.repository.TopicOfInterestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +39,7 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
+    private final TopicOfInterestRepository topicOfInterestRepository;
 
     // TODO select, select, insert, update 쿼리최적화 필요
     public Account saveNewAccount(AccountDto signUpForm) {
@@ -146,8 +149,19 @@ public class AccountService implements UserDetailsService {
             TopicOfInterest topicOfInterest = TopicOfInterest.createTopicOfInterest(account, tag);
 
             a.getTopicOfInterests().add(topicOfInterest);
+            topicOfInterestRepository.save(topicOfInterest);
             topicOfInterest.setAccount(account); // 1차 캐시 양방향 매핑용
         });
+    }
+
+    public void removeTopicOfInterest(Account account, TopicOfInterest toi) {
+         Optional<Account> foundAccount = accountRepository.findById(account.getId());
+
+         // tag컬럼은 놔두고 toi만 delete
+         foundAccount.ifPresent((a) -> {
+             a.getTopicOfInterests().remove(toi);
+             topicOfInterestRepository.delete(toi);
+         });
     }
 }
 

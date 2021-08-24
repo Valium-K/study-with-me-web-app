@@ -18,7 +18,8 @@
             참여하고 싶은 스터디 주제를 입력해 주세요. 해당 주제의 스터디가 생기면 알림을 받을 수 있습니다. 태그를 입력하고 콤마(,)
             또는 엔터를 입력하세요.
           </div>
-          <!--<div id="usr" th:text="${usr}" hidden></div>-->
+          <!-- model에서 json을 참조하기위한 밑작업. -->
+          <div id="whitelist" th:text="${whitelist}" hidden></div>
           <input id="tags" type="text" name="tags" th:value="${#strings.listJoin(tags, ',')}"
                  class="tagify-outside" aria-describedby="tagHelp"/>
         </div>
@@ -57,6 +58,8 @@
 
     var tagify = new Tagify(tagInput, {
       pattern: /^.{0,20}$/,
+      // model에서 whitelist를 받고(div는 hidden으로 처리) id로 참조함
+      whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
       dropdown : {
         enabled: 1, // suggest tags after a single character input
       } // map tags
@@ -71,6 +74,7 @@
     tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
   });
 </script>
+<!--inline 방식으로 json을 받음-->
 <script th:replace="fragments.html :: ajax-csrf-header"></script>
 </body>
 </html>

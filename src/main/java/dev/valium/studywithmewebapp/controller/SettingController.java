@@ -1,5 +1,7 @@
 package dev.valium.studywithmewebapp.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.valium.studywithmewebapp.controller.dto.form.TagForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.AccountForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,6 +52,7 @@ public class SettingController {
     private final AccountService accountService;
     private final TagRepository tagRepository;
     private final TopicOfInterestRepository topicOfInterestRepository;
+    private final ObjectMapper objectMapper;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
@@ -166,16 +170,21 @@ public class SettingController {
     }
 
     @GetMapping(SETTINGS_TAG_URL)
-    public String updateTags(@CurrentUser Account account, Model model) {
-        model.addAttribute(account);
+    public String updateTags(@CurrentUser Account account, Model model) throws JsonProcessingException {
         Set<TopicOfInterest> tois = topicOfInterestRepository.findTopicOfInterestsByAccount_Id(account.getId());
-        List<String> tags = tois.stream().map(toi -> toi.getTag().getTitle()).collect(Collectors.toList());
+        List<String> InterestingTags = tois.stream().map(toi -> toi.getTag().getTitle()).collect(Collectors.toList());
 
-        model.addAttribute("tags", tags);
+        model.addAttribute("tags", InterestingTags);
+        model.addAttribute(account);
+
+        List<String> allTags = tagRepository.findAll().stream().map(Tag::getTitle).collect(Collectors.toList());
+
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allTags));
+
         return SETTINGS_TAG_VIEW_NAME;
     }
 
-    @PostMapping("/settings/tags/add")
+    @PostMapping(SETTINGS_TAG_URL + "/add")
     @ResponseBody
     public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
@@ -186,6 +195,24 @@ public class SettingController {
 
         accountService.addTopicOfInterest(account, tag);
 
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(SETTINGS_TAG_URL + "/remove")
+    @ResponseBody
+    public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) throws Exception {
+        String title = tagForm.getTagTitle();
+        Tag tag = tagRepository.findByTitle(title).orElse(null);
+
+        if(tag == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        TopicOfInterest foundToi = topicOfInterestRepository
+                .findTopicOfInterestByTag(tag)
+                .orElseThrow(Exception::new);;
+
+        accountService.removeTopicOfInterest(account, foundToi);
         return ResponseEntity.ok().build();
     }
 }
