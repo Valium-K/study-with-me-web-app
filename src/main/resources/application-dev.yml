@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: testuser
+    password: testdb
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+#  mail 설정이 있으면 spring이 bean을 자동으로 등록해준다.
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: lschan96@gmail.com
+    password: mudjqinuqxssklka
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls.enable: true

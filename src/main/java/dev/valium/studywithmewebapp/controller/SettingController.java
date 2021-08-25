@@ -7,12 +7,10 @@ import dev.valium.studywithmewebapp.controller.dto.settings.AccountForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
-import dev.valium.studywithmewebapp.domain.Account;
-import dev.valium.studywithmewebapp.domain.CurrentUser;
-import dev.valium.studywithmewebapp.domain.Tag;
-import dev.valium.studywithmewebapp.domain.TopicOfInterest;
+import dev.valium.studywithmewebapp.domain.*;
 import dev.valium.studywithmewebapp.repository.TagRepository;
 import dev.valium.studywithmewebapp.repository.TopicOfInterestRepository;
+import dev.valium.studywithmewebapp.repository.ZoneRepository;
 import dev.valium.studywithmewebapp.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,12 +45,15 @@ public class SettingController {
 
     static final String SETTINGS_TAG_VIEW_NAME = "settings/tags";
     static final String SETTINGS_TAG_URL = "/settings/tags";
+    static final String SETTINGS_ZONE_VIEW_NAME = "settings/zone";
+    static final String SETTINGS_ZONE_URL = "/settings/zone";
 
 
     private final AccountService accountService;
     private final TagRepository tagRepository;
     private final TopicOfInterestRepository topicOfInterestRepository;
     private final ObjectMapper objectMapper;
+    private final ZoneRepository zoneRepository;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
@@ -210,9 +211,46 @@ public class SettingController {
 
         TopicOfInterest foundToi = topicOfInterestRepository
                 .findTopicOfInterestByTag(tag)
-                .orElseThrow(Exception::new);;
+                .orElseThrow(Exception::new);
 
         accountService.removeTopicOfInterest(account, foundToi);
         return ResponseEntity.ok().build();
     }
+//
+//    @GetMapping(SETTINGS_ZONE_URL)
+//    public String updateZonesForm(@CurrentUser Account account, Model model) throws JsonProcessingException {
+//        model.addAttribute(account);
+//
+//        Set<Zone> zones = accountService.getZones(account);
+//        model.addAttribute("zones", zones.stream().map(Zone::toString).collect(Collectors.toList()));
+//
+//        List<String> allZones = zoneRepository.findAll().stream().map(Zone::toString).collect(Collectors.toList());
+//        model.addAttribute("whitelist", objectMapper.writeValueAsString(allZones));
+//
+//        return SETTINGS + ZONES;
+//    }
+//
+//    @PostMapping(SETTINGS_ZONE_URL + "/add")
+//    @ResponseBody
+//    public ResponseEntity addZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+//        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+//        if (zone == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        accountService.addZone(account, zone);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PostMapping(ZONSETTINGS_ZONE_URLES + "/remove")
+//    @ResponseBody
+//    public ResponseEntity removeZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+//        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+//        if (zone == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        accountService.removeZone(account, zone);
+//        return ResponseEntity.ok().build();
+//    }
 }

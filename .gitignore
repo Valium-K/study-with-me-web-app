@@ -39,3 +39,6 @@ out/
 
 ### NPM ###
 resources/static/node_modules
+
+### SECURE ###
+resources/application-dev.yml
