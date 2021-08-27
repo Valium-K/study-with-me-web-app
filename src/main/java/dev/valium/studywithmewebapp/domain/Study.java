@@ -1,5 +1,6 @@
 package dev.valium.studywithmewebapp.domain;
 
+import dev.valium.studywithmewebapp.controller.dto.form.StudyForm;
 import lombok.*;
 
 import javax.persistence.*;
@@ -54,4 +55,18 @@ public class Study {
     private boolean closed;
 
     private boolean useBanner;
+
+    public static Study createStudy(StudyForm form) {
+        Study study = new Study();
+        study.setPath(form.getPath());
+        study.setTitle(form.getTitle());
+        study.setShortDescription(form.getShortDescription());
+        study.setFullDescription(form.getFullDescription());
+
+        return study;
+    }
+
+    public void addManager(Account account) {
+        this.managers.add(account);
+    }
 }
