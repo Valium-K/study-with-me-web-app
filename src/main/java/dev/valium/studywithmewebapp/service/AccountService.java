@@ -6,14 +6,18 @@ import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.controller.dto.UserAccount;
-import dev.valium.studywithmewebapp.domain.Account;
-import dev.valium.studywithmewebapp.domain.TopicOfInterest;
-import dev.valium.studywithmewebapp.domain.Tag;
+import dev.valium.studywithmewebapp.domain.*;
+import dev.valium.studywithmewebapp.mail.EmailMessage;
+import dev.valium.studywithmewebapp.mail.EmailService;
 import dev.valium.studywithmewebapp.repository.AccountRepository;
+import dev.valium.studywithmewebapp.repository.Account_ZoneRepository;
 import dev.valium.studywithmewebapp.repository.TopicOfInterestRepository;
+import dev.valium.studywithmewebapp.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -25,21 +29,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
-    private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final TopicOfInterestRepository topicOfInterestRepository;
+    private final ZoneRepository zoneRepository;
+    private final Account_ZoneRepository account_zoneRepository;
 
     // TODO select, select, insert, update 쿼리최적화 필요
     public Account saveNewAccount(AccountDto signUpForm) {
@@ -52,21 +61,22 @@ public class AccountService implements UserDetailsService {
                 .studyUpdatedByEmail(true)
                 .build()
         );
+        newAccount.generateEmailCheckToken();
         sendSignUpConfirmEmail(newAccount);
 
         return newAccount;
     }
 
     public void sendSignUpConfirmEmail(Account savedAccount) {
-        savedAccount.generateEmailCheckToken();
+        // html을 위한 mimeMessage
+        EmailMessage email = EmailMessage.builder()
+                .to(savedAccount.getEmail())
+                .subject("스윗미 회원 가입 인증메일 입니다.")
+                .message("/check-email=token?token=" + savedAccount.getEmailCheckToken() +
+                        "&email=" + savedAccount.getEmail())
+                .build();
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(savedAccount.getEmail());
-        mailMessage.setSubject("스터디윗미 회원 가입 인증");   // 메일 제목
-        mailMessage.setText("/check-email-token?token=" + savedAccount.getEmailCheckToken() +
-                "&email=" + savedAccount.getEmail()); // 메일 본문
-
-        javaMailSender.send(mailMessage);
+        emailService.sendEmail(email);
     }
 
     public void login(Account account) {
@@ -162,6 +172,34 @@ public class AccountService implements UserDetailsService {
              a.getTopicOfInterests().remove(toi);
              topicOfInterestRepository.delete(toi);
          });
+    }
+
+    public Set<Account_Zone> getAccount_Zones(Account account) {
+        return account_zoneRepository.findAllByAccountId(account.getId());
+    }
+
+    public void addZone(Account account, Zone zone) {
+        Optional<Account> foundAccount = accountRepository.findById(account.getId());
+
+        foundAccount.ifPresent(a -> {
+            Account_Zone account_zone = Account_Zone.createAccount_Zone(account, zone);
+
+            a.getAccount_zones().add(account_zone);
+            account_zoneRepository.save(account_zone);
+        });
+    }
+
+    public void removeZone(Account account, Account_Zone account_zone) {
+        Optional<Account> foundAccount = accountRepository.findById(account.getId());
+
+        foundAccount.ifPresent(a -> {
+            a.getAccount_zones().remove(account_zone);
+            account_zoneRepository.delete(account_zone);
+        });
+    }
+
+    public Account getAccount(Long id) {
+        return accountRepository.findAccountById(id);
     }
 }
 

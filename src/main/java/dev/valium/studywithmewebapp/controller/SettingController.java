@@ -3,11 +3,13 @@ package dev.valium.studywithmewebapp.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.valium.studywithmewebapp.controller.dto.form.TagForm;
+import dev.valium.studywithmewebapp.controller.dto.form.ZoneForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.AccountForm;
 import dev.valium.studywithmewebapp.controller.dto.settings.Notifications;
 import dev.valium.studywithmewebapp.controller.dto.settings.Password;
 import dev.valium.studywithmewebapp.controller.dto.settings.Profile;
 import dev.valium.studywithmewebapp.domain.*;
+import dev.valium.studywithmewebapp.repository.Account_ZoneRepository;
 import dev.valium.studywithmewebapp.repository.TagRepository;
 import dev.valium.studywithmewebapp.repository.TopicOfInterestRepository;
 import dev.valium.studywithmewebapp.repository.ZoneRepository;
@@ -45,8 +47,8 @@ public class SettingController {
 
     static final String SETTINGS_TAG_VIEW_NAME = "settings/tags";
     static final String SETTINGS_TAG_URL = "/settings/tags";
-    static final String SETTINGS_ZONE_VIEW_NAME = "settings/zone";
-    static final String SETTINGS_ZONE_URL = "/settings/zone";
+    static final String SETTINGS_ZONE_VIEW_NAME = "settings/zones";
+    static final String SETTINGS_ZONE_URL = "/settings/zones";
 
 
     private final AccountService accountService;
@@ -54,6 +56,7 @@ public class SettingController {
     private final TopicOfInterestRepository topicOfInterestRepository;
     private final ObjectMapper objectMapper;
     private final ZoneRepository zoneRepository;
+    private final Account_ZoneRepository account_zoneRepository;
 
     @GetMapping(SETTINGS_PROFILE_URL)
     public String profileUpdateForm(@CurrentUser Account account, Model model) {
@@ -113,8 +116,9 @@ public class SettingController {
 
     @GetMapping(SETTINGS_NOTIFICATION_URL)
     public String notificationUpdateForm(@CurrentUser Account account, Model model) {
-        model.addAttribute(account);
-        model.addAttribute(new Notifications(account));
+        Account foundAccount = accountService.getAccount(account.getId());
+        model.addAttribute("account", foundAccount);
+        model.addAttribute(new Notifications(foundAccount));
 
         return SETTINGS_NOTIFICATION_VIEW_NAME;
     }
@@ -131,7 +135,7 @@ public class SettingController {
 
         accountService.updateNotification(notifications, account);
 
-        attributes.addFlashAttribute("message", "비밀번호를 수정하였습니다.");
+        attributes.addFlashAttribute("message", "알림을 수정하였습니다.");
         model.addAttribute(notifications);
 
         return SETTINGS_NOTIFICATION_VIEW_NAME;
@@ -139,7 +143,6 @@ public class SettingController {
 
     @GetMapping(SETTINGS_ACCOUNT_URL)
     public String accountUpdateForm(@CurrentUser Account account, Model model) {
-        model.addAttribute(account);
         model.addAttribute(new AccountForm());
 
         return SETTINGS_ACCOUNT_VIEW_NAME;
@@ -216,41 +219,46 @@ public class SettingController {
         accountService.removeTopicOfInterest(account, foundToi);
         return ResponseEntity.ok().build();
     }
-//
-//    @GetMapping(SETTINGS_ZONE_URL)
-//    public String updateZonesForm(@CurrentUser Account account, Model model) throws JsonProcessingException {
-//        model.addAttribute(account);
-//
-//        Set<Zone> zones = accountService.getZones(account);
-//        model.addAttribute("zones", zones.stream().map(Zone::toString).collect(Collectors.toList()));
-//
-//        List<String> allZones = zoneRepository.findAll().stream().map(Zone::toString).collect(Collectors.toList());
-//        model.addAttribute("whitelist", objectMapper.writeValueAsString(allZones));
-//
-//        return SETTINGS + ZONES;
-//    }
-//
-//    @PostMapping(SETTINGS_ZONE_URL + "/add")
-//    @ResponseBody
-//    public ResponseEntity addZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
-//        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
-//        if (zone == null) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//
-//        accountService.addZone(account, zone);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping(ZONSETTINGS_ZONE_URLES + "/remove")
-//    @ResponseBody
-//    public ResponseEntity removeZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
-//        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
-//        if (zone == null) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//
-//        accountService.removeZone(account, zone);
-//        return ResponseEntity.ok().build();
-//    }
+
+    @GetMapping(SETTINGS_ZONE_URL)
+    public String updateZonesForm(@CurrentUser Account account, Model model) throws JsonProcessingException {
+        model.addAttribute(account);
+
+        Set<Account_Zone> account_zones = accountService.getAccount_Zones(account);
+        model.addAttribute("zones", account_zones.stream().map(az -> az.getZone().toString()).collect(Collectors.toList()));
+
+        List<String> allZones = zoneRepository.findAll().stream().map(Zone::toString).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allZones));
+
+        return SETTINGS_ZONE_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_ZONE_URL + "/add")
+    @ResponseBody
+    public ResponseEntity addZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (zone == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        accountService.addZone(account, zone);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(SETTINGS_ZONE_URL + "/remove")
+    @ResponseBody
+    public ResponseEntity removeZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) throws Exception {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (zone == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+
+        Account_Zone account_zone = account_zoneRepository
+                .findByZone(zone)
+                .orElseThrow(Exception::new);
+
+        accountService.removeZone(account, account_zone);
+        return ResponseEntity.ok().build();
+    }
 }

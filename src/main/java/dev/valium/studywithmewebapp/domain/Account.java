@@ -51,6 +51,9 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<TopicOfInterest> topicOfInterests = new HashSet<>();
 
+    // 지역
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<Account_Zone> account_zones = new HashSet<>();
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();    // TODO 한 번 쓰는 UUID를 Account 테이블에 넣어야 할까??? 고민해보기.
@@ -63,5 +66,17 @@ public class Account {
         this.setStudyUpdatedByWeb(notifications.isStudyUpdatedByWeb());
         this.setStudyUpdatedByEmail(notifications.isStudyUpdatedByEmail());
         this.setStudyEnrollmentResultByWeb(notifications.isStudyEnrollmentResultByWeb());
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "studyCreatedByEmail=" + studyCreatedByEmail +
+                ", studyCreatedByWeb=" + studyCreatedByWeb +
+                ", studyEnrollmentResultByEmail=" + studyEnrollmentResultByEmail +
+                ", studyEnrollmentResultByWeb=" + studyEnrollmentResultByWeb +
+                ", studyUpdatedByEmail=" + studyUpdatedByEmail +
+                ", studyUpdatedByWeb=" + studyUpdatedByWeb +
+                '}';
     }
 }
