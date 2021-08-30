@@ -201,5 +201,13 @@ public class AccountService implements UserDetailsService {
     public Account getAccount(Long id) {
         return accountRepository.findAccountById(id);
     }
+
+    public Account getAccount(String nickname) {
+        return Optional.ofNullable(
+                accountRepository.findByNickname(nickname)
+        ).orElseThrow(() ->
+                new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다.")
+        );
+    }
 }
 

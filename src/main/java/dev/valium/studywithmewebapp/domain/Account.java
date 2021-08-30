@@ -79,4 +79,8 @@ public class Account {
                 ", studyUpdatedByWeb=" + studyUpdatedByWeb +
                 '}';
     }
+
+    public boolean isManagerOf(Study study) {
+        return study.getManagers().contains(this);
+    }
 }
