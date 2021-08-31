@@ -61,4 +61,12 @@ public class StudyService {
         study.setImage(form.getImage());
         study.setUseBanner(true);
     }
+
+    public void addMember(Study study, Account account) {
+        study.getMembers().add(account);
+    }
+
+    public void removeMember(Study study, Account account) {
+        study.getMembers().remove(account);
+    }
 }
